@@ -25,5 +25,8 @@ Static GitHub Pages user site (`daniel-volpin/daniel-volpin.github.io`) with a h
 
 ```bash
 python3 scripts/check_site.py          # links, images, titles, lang, hreflang, CI phrases
+python3 scripts/check_site.py --live   # every published URL returns 200
 python3 -m http.server 8000            # local preview at http://127.0.0.1:8000/
 ```
+
+The Check workflow runs the file check on every pull request and push to `main`, and the live check every Monday and on demand.
