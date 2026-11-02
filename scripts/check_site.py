@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Check the Volpin site before publishing. Standard library only.
 
-    python3 scripts/check_site.py [--allow-placeholder]
+    python3 scripts/check_site.py          # the files in this repository
+    python3 scripts/check_site.py --live   # the published pages
 
 Checks that every page in REQUIRED_PAGES exists, that every internal link and
 image resolves, that each page has a <title> and the right lang, that the
@@ -9,10 +10,16 @@ English and Chinese Guandan pages name each other with hreflang alternates,
 that no page loads a script or anything from another host, that Divefolio's
 privacy page keeps the phrases divefolio-ios CI requires, and that no page
 shows the personal address or the unfilled support-email placeholder.
+
+With --live, fetches every page in REQUIRED_PAGES from ORIGIN instead and
+checks it returns 200 without the placeholder, since those URLs are in
+App Store Connect and must never break.
 """
 from html.parser import HTMLParser
 from pathlib import Path
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit, unquote
+from urllib.request import urlopen
 import sys
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -112,9 +119,27 @@ def file_for(path):
     return target
 
 
+def check_live():
+    errors = []
+    for url in REQUIRED_PAGES:
+        try:
+            with urlopen(ORIGIN + url, timeout=30) as response:
+                text = response.read().decode("utf-8")
+        except (HTTPError, URLError) as error:
+            errors.append(f"{ORIGIN}{url}: {error}")
+            continue
+        if PLACEHOLDER in text:
+            errors.append(f"{ORIGIN}{url}: support email not filled in")
+    for line in errors:
+        print(f"FAIL  {line}")
+    print(f"{len(REQUIRED_PAGES)} live pages checked, {len(errors)} failure(s).")
+    return 1 if errors else 0
+
+
 def main():
-    allow_placeholder = "--allow-placeholder" in sys.argv
-    errors, warnings = [], []
+    if "--live" in sys.argv:
+        return check_live()
+    errors = []
     pages = {}
     for html_file in sorted(ROOT.rglob("*.html")):
         if ".git" in html_file.parts:
@@ -147,7 +172,7 @@ def main():
             if banned in text:
                 errors.append(f"{url}: contains {banned}")
         if PLACEHOLDER in text:
-            (warnings if allow_placeholder else errors).append(f"{url}: support email not filled in")
+            errors.append(f"{url}: support email not filled in")
         for kind, ref in page.refs:
             resolved = url_path(url, ref)
             if resolved is None:
@@ -183,11 +208,9 @@ def main():
             if phrase.lower() in privacy[1].lower():
                 errors.append(f"/divefolio/privacy/: retired claim present: {phrase}")
 
-    for line in warnings:
-        print(f"WARN  {line}")
     for line in errors:
         print(f"FAIL  {line}")
-    print(f"{len(pages)} pages checked, {len(errors)} failure(s), {len(warnings)} warning(s).")
+    print(f"{len(pages)} pages checked, {len(errors)} failure(s).")
     return 1 if errors else 0
 
 
