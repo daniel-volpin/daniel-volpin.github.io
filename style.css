@@ -116,12 +116,9 @@
   --accent: #2d5236;
   --accent-ink: #fdf1ea;
   --tint: #e3eee5;
-  --hero-bg: #cf6e26;
-  --hero-text: #141312;
-  --hero-muted: #141312;
-  --hero-heading: #fdf1ea;
-  --stripe: #cf6e26;
-  --shadow: rgb(60 30 10 / 0.4);
+  --hero-bg: linear-gradient(180deg, #e3eee5 0%, var(--page) 100%);
+  --stripe: #c86438;
+  --shadow: rgb(40 71 48 / 0.35);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -134,11 +131,8 @@
     --accent: #82ba91;
     --accent-ink: #161614;
     --tint: #1c2e21;
-    --hero-bg: #7b3617;
-    --stripe: #e28a50;
-    --hero-text: #fdf1ea;
-    --hero-muted: #f6cdb3;
-    --hero-heading: #fdf1ea;
+    --hero-bg: linear-gradient(180deg, #1c2e21 0%, var(--page) 100%);
+    --stripe: #f0936e;
   }
 }
 
