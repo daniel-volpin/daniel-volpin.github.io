@@ -14,7 +14,7 @@ Static GitHub Pages user site (`daniel-volpin/daniel-volpin.github.io`) with a h
 ## Invariants
 
 - URLs are in App Store Connect: never rename, move or remove a page folder. Use folder URLs (`/app/page/`), never `.html` links.
-- Never create folders named `divefolio-site` or `health-companion-legal`; those paths belong to the older project Pages sites.
+- Never create folders named `divefolio-site` or `health-companion-legal`; those paths belong to the archived `divefolio-site` and `health-companion-legal` project Pages sites, which redirect their old URLs here.
 - `divefolio-ios` CI checks out `divefolio/privacy/index.html` and requires the phrases "Apple Maps receives" and "workout route"; keep them, and keep the retired phrases out (see that repo's `.github/workflows/quality.yml`).
 - Copy policy and support text from each app repo (`PRIVACY.md`, `SUPPORT.md`, `STORE.md`, README). Every screen, tab and button a page names must exist in the app. Never change what a policy says without updating the app repo and the "Last updated" date.
 - Only link to the App Store for an app that is live; otherwise show "Coming soon to the App Store".
